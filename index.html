@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopArc — Better to Shop</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0D1117;
+      --bg-card:   #161B22;
+      --bg-hover:  #1C2230;
+      --accent:    #D4623A;
+      --accent-lt: #E8784F;
+      --white:     #F0F6FF;
+      --muted:     #8B949E;
+      --border:    #21262D;
+      --radius:    10px;
+      --transition: 0.22s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Utility ──────────────────────────────────────────── */
+    .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+    .accent    { color: var(--accent); }
+    .tag {
+      display: inline-block;
+      background: rgba(212,98,58,.15);
+      color: var(--accent);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(212,98,58,.35);
+      margin-bottom: .75rem;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .9rem;
+      color: var(--muted);
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: var(--white);
+      font-size: .85rem;
+      font-weight: 600;
+      padding: .5rem 1.2rem;
+      border-radius: var(--radius);
+      transition: background var(--transition), transform var(--transition);
+      white-space: nowrap;
+    }
+
+    .nav-cta:hover { background: var(--accent-lt); transform: translateY(-1px); }
+
+    /* hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: all .3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: var(--muted); font-size: .95rem; }
+    .mobile-menu a:hover { color: var(--white); }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    #hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* animated grid background */
+    #hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: .35;
+    }
+
+    /* radial glow */
+    #hero::after {
+      content: "";
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(212,98,58,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -.02em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-content p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--white);
+      font-size: .95rem;
+      font-weight: 700;
+      padding: .75rem 1.75rem;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-lt);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212,98,58,.35);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--white);
+      font-size: .95rem;
+      font-weight: 600;
+      padding: .75rem 1.75rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+    }
+
+    .btn-ghost:hover { border-color: var(--accent); background: rgba(212,98,58,.08); }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { }
+    .stat-item .num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .stat-item .label {
+      font-size: .8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    /* ── Section wrapper ──────────────────────────────────── */
+    section { padding: 5rem 0; }
+
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-header h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: .5rem;
+    }
+    .section-header p {
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto;
+      font-size: .95rem;
+    }
+
+    /* ── Skills Grid ──────────────────────────────────────── */
+    #skills { background: var(--bg); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      transition: border-color var(--transition), transform var(--transition),
+                  box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(212,98,58,.07), transparent 60%);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+    .skill-card:hover::before { opacity: 1; }
+
+    .skill-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: rgba(212,98,58,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(212,98,58,.25);
+    }
+
+    .skill-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
+    .skill-card p  { font-size: .85rem; color: var(--muted); line-height: 1.55; }
+
+    .skill-card .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: 1rem;
+    }
+
+    .pill {
+      font-size: .72rem;
+      color: var(--muted);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 9px;
+    }
+
+    /* ── Featured Products ────────────────────────────────── */
+    #products { background: rgba(22,27,34,.55); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .product-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition), transform var(--transition);
+      cursor: pointer;
+    }
+
+    .product-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+
+    .product-img {
+      height: 160px;
+      background: linear-gradient(135deg, #1C2230, #0D1117);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+    }
+
+    .badge {
+      position: absolute;
+      top: .65rem;
+      right: .65rem;
+      background: var(--accent);
+      color: var(--white);
+      font-size: .68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: .04em;
+    }
+
+    .product-body { padding: 1rem; }
+    .product-body .category { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .35rem; }
+    .product-body h3 { font-size: .95rem; font-weight: 700; margin-bottom: .35rem; }
+    .product-body .stars { color: var(--accent); font-size: .85rem; margin-bottom: .5rem; }
+    .product-body .price { font-size: 1.15rem; font-weight: 800; color: var(--accent); }
+    .product-body .old-price { font-size: .8rem; color: var(--muted); text-decoration: line-through; margin-left: .4rem; font-weight: 400; }
+
+    .add-btn {
+      display: block;
+      width: 100%;
+      margin-top: .85rem;
+      padding: .55rem;
+      background: rgba(212,98,58,.12);
+      color: var(--accent);
+      border: 1px solid rgba(212,98,58,.35);
+      border-radius: 7px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      text-align: center;
+    }
+
+    .add-btn:hover { background: var(--accent); color: var(--white); }
+
+    /* ── Cart Toast ───────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--accent);
+      color: var(--white);
+      padding: .75rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: .88rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .3s, transform .3s;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Inventory ────────────────────────────────────────── */
+    #inventory { background: var(--bg); }
+
+    .inventory-table-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: rgba(212,98,58,.08); border-bottom: 1px solid var(--border); }
+    th { padding: .85rem 1.25rem; text-align: left; font-size: .8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
+    td { padding: .85rem 1.25rem; font-size: .88rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-hover); }
+
+    .stock-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+    .stock-ok   { background: rgba(46,160,67,.15); color: #3FB950; border: 1px solid rgba(46,160,67,.3); }
+    .stock-low  { background: rgba(212,98,58,.15);  color: var(--accent); border: 1px solid rgba(212,98,58,.3); }
+    .stock-out  { background: rgba(139,68,68,.15);  color: #F85149; border: 1px solid rgba(139,68,68,.3); }
+
+    /* ── Payment ──────────────────────────────────────────── */
+    #payment { background: rgba(22,27,34,.55); }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .payment-form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+    }
+
+    .payment-form-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-size: .78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .45rem; }
+    .form-group input, .form-group select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--white);
+      font-size: .9rem;
+      padding: .65rem .9rem;
+      outline: none;
+      transition: border-color var(--transition);
+      appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group input::placeholder { color: var(--muted); }
+
+    .card-icons {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-icon {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .3rem .65rem;
+      font-size: .78rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .pay-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: .8rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      margin-top: .5rem;
+    }
+
+    .pay-btn:hover {
+      background: var(--accent-lt);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212,98,58,.35);
+    }
+
+    .order-summary {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+    }
+
+    .order-summary h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .summary-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .summary-info { flex: 1; }
+    .summary-info .s-name { font-size: .88rem; font-weight: 600; }
+    .summary-info .s-meta { font-size: .75rem; color: var(--muted); }
+    .summary-price { font-size: .95rem; font-weight: 700; color: var(--accent); }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+    .total-row { display: flex; justify-content: space-between; font-size: .9rem; color: var(--muted); margin-bottom: .45rem; }
+    .total-row.grand { color: var(--white); font-size: 1.05rem; font-weight: 800; }
+    .total-row .val { font-weight: 700; }
+
+    /* secure badges */
+    .secure-row { display: flex; gap: 1.25rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    .secure-badge { display: flex; align-items: center; gap: .4rem; font-size: .75rem; color: var(--muted); }
+    .secure-badge span.ico { font-size: 1rem; }
+
+    /* ── Contact ──────────────────────────────────────────── */
+    #contact { background: var(--bg); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    .contact-info h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -.02em; }
+    .contact-info p  { color: var(--muted); font-size: .95rem; margin-bottom: 1.75rem; line-height: 1.7; }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-detail .ico-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      background: rgba(212,98,58,.1);
+      border: 1px solid rgba(212,98,58,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .contact-detail .cd-text .cd-label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .contact-detail .cd-text .cd-val   { font-size: .92rem; font-weight: 600; }
+
+    .contact-form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+    }
+
+    .contact-form-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+    .form-group textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--white);
+      font-size: .9rem;
+      padding: .65rem .9rem;
+      outline: none;
+      transition: border-color var(--transition);
+      resize: vertical;
+      min-height: 110px;
+      font-family: inherit;
+    }
+
+    .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea::placeholder { color: var(--muted); }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0 1.5rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo { font-size: 1.2rem; font-weight: 800; }
+    .footer-links { display: flex; gap: 1.75rem; flex-wrap: wrap; }
+    .footer-links a { font-size: .82rem; color: var(--muted); transition: color var(--transition); }
+    .footer-links a:hover { color: var(--white); }
+    .footer-copy { width: 100%; text-align: center; font-size: .78rem; color: var(--muted); margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+
+    /* ── Scroll progress bar ──────────────────────────────── */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      width: 0%;
+      z-index: 200;
+      transition: width .1s linear;
+    }
+
+    /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .payment-grid  { grid-template-columns: 1fr; }
+      .contact-grid  { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .form-row  { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+    }
+
+    /* ── Fade-in animation ────────────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div id="progress-bar"></div>
+
+<!-- ──────────── NAV ──────────── -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <div class="logo"><span class="accent">Shop</span>Arc</div>
+      <ul class="nav-links">
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#inventory">Inventory</a></li>
+        <li><a href="#payment">Payment</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#payment" class="nav-cta">Shop Now</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#skills"    onclick="closeMobile()">Skills</a>
+      <a href="#products"  onclick="closeMobile()">Products</a>
+      <a href="#inventory" onclick="closeMobile()">Inventory</a>
+      <a href="#payment"   onclick="closeMobile()">Payment</a>
+      <a href="#contact"   onclick="closeMobile()">Contact</a>
+      <a href="#payment" class="nav-cta" style="width:fit-content;display:inline-block;" onclick="closeMobile()">Shop Now</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ──────────── HERO ──────────── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="tag">Better to Shop</div>
+      <h1>Your Premium<br><span class="accent">Commerce Platform</span></h1>
+      <p>A modular, AI-powered shopping experience with inventory control, secure payments, and real-time analytics — built for modern businesses.</p>
+      <div class="hero-btns">
+        <a href="#products" class="btn-primary">Browse Products</a>
+        <a href="#skills"   class="btn-ghost">Explore Skills</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="num">12K+</div><div class="label">Products</div></div>
+        <div class="stat-item"><div class="num">98%</div><div class="label">Uptime</div></div>
+        <div class="stat-item"><div class="num">4.9★</div><div class="label">Rating</div></div>
+        <div class="stat-item"><div class="num">3.2M</div><div class="label">Customers</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── SKILLS ──────────── -->
+<section id="skills">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="tag">Platform Skills</div>
+      <h2>Everything You Need to <span class="accent">Operate</span></h2>
+      <p>Modular, MCP-driven services that scale independently — deploy only what your business requires.</p>
+    </div>
+
+    <div class="skills-grid">
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">📦</div>
+        <h3>Inventory Management</h3>
+        <p>Real-time stock tracking, automated low-stock alerts, supplier purchase orders, and multi-warehouse location management — all from a single dashboard.</p>
+        <div class="pill-row">
+          <span class="pill">Live Stock Sync</span>
+          <span class="pill">Auto Reorder</span>
+          <span class="pill">Batch Import</span>
+          <span class="pill">Audit Logs</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">💳</div>
+        <h3>Customer Payment</h3>
+        <p>PCI-compliant checkout supporting credit cards, UPI, net banking, and wallets. Automatic invoice generation, refund workflows, and fraud detection built in.</p>
+        <div class="pill-row">
+          <span class="pill">PCI-DSS</span>
+          <span class="pill">Refunds</span>
+          <span class="pill">Invoicing</span>
+          <span class="pill">Multi-currency</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">🤖</div>
+        <h3>AI Product Recommendations</h3>
+        <p>Claude-powered personalisation engine that analyses browsing patterns and purchase history to surface relevant products, increasing average order value.</p>
+        <div class="pill-row">
+          <span class="pill">Personalised</span>
+          <span class="pill">MCP-driven</span>
+          <span class="pill">A/B Ready</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">👤</div>
+        <h3>Customer Profile Engine</h3>
+        <p>Unified customer records with consent management, purchase history, preference tagging, and GDPR-compliant data deletion workflows.</p>
+        <div class="pill-row">
+          <span class="pill">GDPR</span>
+          <span class="pill">RLS Policies</span>
+          <span class="pill">Consent Logs</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">🚚</div>
+        <h3>Order & Fulfilment</h3>
+        <p>End-to-end order lifecycle management — from placement to dispatch. Integrates with third-party logistics APIs and provides real-time customer tracking.</p>
+        <div class="pill-row">
+          <span class="pill">3PL Ready</span>
+          <span class="pill">Live Tracking</span>
+          <span class="pill">Returns</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">📊</div>
+        <h3>Analytics & Reporting</h3>
+        <p>Prometheus-backed dashboards surfacing revenue trends, conversion rates, cart abandonment, and inventory turnover — exportable to CSV and PDF.</p>
+        <div class="pill-row">
+          <span class="pill">Prometheus</span>
+          <span class="pill">Grafana</span>
+          <span class="pill">CSV Export</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">🔒</div>
+        <h3>Auth & Access Control</h3>
+        <p>Supabase Auth with JWT sessions, role-based access control (Admin / Staff / Customer), multi-factor authentication, and session revocation.</p>
+        <div class="pill-row">
+          <span class="pill">JWT</span>
+          <span class="pill">RBAC</span>
+          <span class="pill">MFA</span>
+          <span class="pill">SSO-ready</span>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up">
+        <div class="skill-icon">💬</div>
+        <h3>Customer Support Assist</h3>
+        <p>AI-augmented support ticketing with auto-classification, sentiment analysis, SLA tracking, and suggested resolutions — reducing first-response time significantly.</p>
+        <div class="pill-row">
+          <span class="pill">Auto-triage</span>
+          <span class="pill">SLA Tracking</span>
+          <span class="pill">Sentiment AI</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── PRODUCTS ──────────── -->
+<section id="products">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="tag">Featured Products</div>
+      <h2>Top Picks This <span class="accent">Season</span></h2>
+      <p>Curated selection across electronics, accessories, and lifestyle — all in stock and ready to dispatch.</p>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- ──────────── INVENTORY ──────────── -->
+<section id="inventory">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="tag">Inventory Management</div>
+      <h2>Live Stock <span class="accent">Overview</span></h2>
+      <p>Real-time SKU-level visibility across all warehouse locations with automated reorder thresholds.</p>
+    </div>
+
+    <div class="inventory-table-wrap fade-up">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>In Stock</th>
+            <th>Reorder Level</th>
+            <th>Warehouse</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── PAYMENT ──────────── -->
+<section id="payment">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="tag">Secure Checkout</div>
+      <h2>Customer <span class="accent">Payment</span></h2>
+      <p>PCI-DSS compliant checkout. Your payment information is encrypted end-to-end and never stored on our servers.</p>
+    </div>
+
+    <div class="payment-grid">
+      <!-- Form -->
+      <div class="payment-form-card fade-up">
+        <h3>Payment Details</h3>
+        <div class="card-icons">
+          <span class="card-icon">VISA</span>
+          <span class="card-icon">MC</span>
+          <span class="card-icon">AMEX</span>
+          <span class="card-icon">UPI</span>
+        </div>
+        <form id="paymentForm" onsubmit="handlePayment(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="pName" placeholder="Jane Smith" required />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="pEmail" placeholder="jane@company.com" required />
+          </div>
+          <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" id="pCard" placeholder="•••• •••• •••• ••••" maxlength="19" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Expiry</label>
+              <input type="text" id="pExpiry" placeholder="MM / YY" maxlength="7" required />
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" id="pCvv" placeholder="•••" maxlength="4" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Billing Address</label>
+            <input type="text" id="pAddress" placeholder="123 Business Park, Mumbai" required />
+          </div>
+          <button class="pay-btn" type="submit">🔒 &nbsp;Pay ₹4,497</button>
+        </form>
+        <div class="secure-row">
+          <div class="secure-badge"><span class="ico">🔒</span> SSL Encrypted</div>
+          <div class="secure-badge"><span class="ico">🛡️</span> PCI-DSS</div>
+          <div class="secure-badge"><span class="ico">✅</span> 2FA Verified</div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary fade-up">
+        <h3>Order Summary</h3>
+        <div id="orderItems"></div>
+        <hr class="divider" />
+        <div class="total-row"><span>Subtotal</span><span class="val">₹4,197</span></div>
+        <div class="total-row"><span>Shipping</span><span class="val">₹300</span></div>
+        <div class="total-row"><span>Discount</span><span class="val accent" style="color:var(--accent)">-₹0</span></div>
+        <hr class="divider" />
+        <div class="total-row grand"><span>Total</span><span class="val">₹4,497</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── CONTACT ──────────── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <!-- Info -->
+      <div class="contact-info fade-up">
+        <div class="tag">Get in Touch</div>
+        <h2>We Are Here to <span class="accent">Assist You</span></h2>
+        <p>Our support team operates Monday through Friday, 09:00 – 18:00 IST. For enterprise enquiries or partnership proposals, please write to us directly.</p>
+
+        <div class="contact-detail">
+          <div class="ico-wrap">✉️</div>
+          <div class="cd-text">
+            <div class="cd-label">Email</div>
+            <div class="cd-val"><a href="mailto:abc@gmail.com" style="color:var(--accent)">abc@gmail.com</a></div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="ico-wrap">📞</div>
+          <div class="cd-text">
+            <div class="cd-label">Phone</div>
+            <div class="cd-val">+91 98765 43210</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="ico-wrap">🏢</div>
+          <div class="cd-text">
+            <div class="cd-label">Office</div>
+            <div class="cd-val">Level 5, Cyber Park, Bengaluru — 560001</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="ico-wrap">🕐</div>
+          <div class="cd-text">
+            <div class="cd-label">Support Hours</div>
+            <div class="cd-val">Mon–Fri, 09:00 – 18:00 IST</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="contact-form-card fade-up">
+        <h3>Send a Message</h3>
+        <form id="contactForm" onsubmit="handleContact(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="cFirst" placeholder="Raunak" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="cLast" placeholder="Rathi" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="cEmail" placeholder="you@company.com" required />
+          </div>
+          <div class="form-group">
+            <label>Phone (optional)</label>
+            <input type="tel" id="cPhone" placeholder="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" id="cSubject" placeholder="Partnership / Support / General" required />
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="cMessage" placeholder="Please describe your enquiry in detail…" required></textarea>
+          </div>
+          <button class="pay-btn" type="submit">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── FOOTER ──────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo"><span class="accent">Shop</span>Arc</div>
+      <div class="footer-links">
+        <a href="#skills">Skills</a>
+        <a href="#products">Products</a>
+        <a href="#inventory">Inventory</a>
+        <a href="#payment">Payment</a>
+        <a href="#contact">Contact</a>
+        <a href="mailto:abc@gmail.com">abc@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-copy">© 2026 ShopArc. All rights reserved. Built with TypeScript · Python · Supabase · MCP.</div>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast">✓ Item added to cart</div>
+
+<!-- ──────────── JS ──────────── -->
+<script>
+  /* ── Data ─────────────────────────────────────────────── */
+  const PRODUCTS = [
+    { emoji:"💻", cat:"Electronics",   name:"ProBook Laptop 15",       stars:5, price:"₹79,999", old:"₹94,999", badge:"Best Seller" },
+    { emoji:"🎧", cat:"Audio",         name:"ArcSound Pro Headphones",  stars:5, price:"₹5,499",  old:"₹7,999",  badge:"Sale" },
+    { emoji:"📱", cat:"Smartphones",   name:"FlexPhone 14 Pro",         stars:4, price:"₹62,999", old:"",        badge:null },
+    { emoji:"⌨️", cat:"Accessories",   name:"Mechanical Keyboard MK80", stars:5, price:"₹4,199",  old:"₹5,499",  badge:"New" },
+    { emoji:"🖱️", cat:"Accessories",   name:"Wireless Ergonomic Mouse", stars:4, price:"₹2,299",  old:"",        badge:null },
+    { emoji:"📷", cat:"Photography",   name:"LensX 4K Action Camera",   stars:5, price:"₹18,499", old:"₹22,999", badge:"Deal" },
+    { emoji:"🖥️", cat:"Monitors",      name:"4K UltraWide Display 32″", stars:5, price:"₹34,999", old:"₹41,999", badge:"Hot" },
+    { emoji:"🔋", cat:"Accessories",   name:"100W GaN Fast Charger",    stars:4, price:"₹1,799",  old:"₹2,499",  badge:null },
+  ];
+
+  const INVENTORY = [
+    { sku:"SKU-001", name:"ProBook Laptop 15",       cat:"Electronics", stock:142, reorder:50,  wh:"BLR-01", status:"ok"  },
+    { sku:"SKU-002", name:"ArcSound Pro Headphones", cat:"Audio",       stock:23,  reorder:30,  wh:"MUM-02", status:"low" },
+    { sku:"SKU-003", name:"FlexPhone 14 Pro",        cat:"Smartphones", stock:0,   reorder:20,  wh:"DEL-03", status:"out" },
+    { sku:"SKU-004", name:"Mechanical Keyboard MK80",cat:"Accessories", stock:310, reorder:100, wh:"BLR-01", status:"ok"  },
+    { sku:"SKU-005", name:"Wireless Ergonomic Mouse",cat:"Accessories", stock:89,  reorder:40,  wh:"MUM-02", status:"ok"  },
+    { sku:"SKU-006", name:"LensX 4K Action Camera",  cat:"Photography", stock:18,  reorder:25,  wh:"HYD-04", status:"low" },
+    { sku:"SKU-007", name:"4K UltraWide Display 32″",cat:"Monitors",    stock:55,  reorder:30,  wh:"BLR-01", status:"ok"  },
+    { sku:"SKU-008", name:"100W GaN Fast Charger",   cat:"Accessories", stock:412, reorder:150, wh:"DEL-03", status:"ok"  },
+  ];
+
+  const ORDER_ITEMS = [
+    { emoji:"🎧", name:"ArcSound Pro Headphones", meta:"Qty 1 · Black", price:"₹5,499" },
+    { emoji:"⌨️", name:"Mechanical Keyboard MK80",meta:"Qty 1 · Grey",  price:"₹4,199" },
+  ];
+
+  /* ── Render Products ───────────────────────────────────── */
+  const grid = document.getElementById("productsGrid");
+  PRODUCTS.forEach(p => {
+    grid.innerHTML += `
+      <div class="product-card fade-up">
+        <div class="product-img">
+          ${p.emoji}
+          ${p.badge ? `<span class="badge">${p.badge}</span>` : ""}
+        </div>
+        <div class="product-body">
+          <div class="category">${p.cat}</div>
+          <h3>${p.name}</h3>
+          <div class="stars">${"★".repeat(p.stars)}${"☆".repeat(5-p.stars)}</div>
+          <span class="price">${p.price}</span>
+          ${p.old ? `<span class="old-price">${p.old}</span>` : ""}
+          <button class="add-btn" onclick="addToCart('${p.name}')">Add to Cart</button>
+        </div>
+      </div>`;
+  });
+
+  /* ── Render Inventory ──────────────────────────────────── */
+  const tbody = document.getElementById("inventoryBody");
+  const labelMap = { ok:"In Stock", low:"Low Stock", out:"Out of Stock" };
+  const classMap = { ok:"stock-ok",  low:"stock-low",  out:"stock-out" };
+  INVENTORY.forEach(r => {
+    tbody.innerHTML += `
+      <tr>
+        <td><code style="color:var(--muted);font-size:.82rem">${r.sku}</code></td>
+        <td>${r.name}</td>
+        <td style="color:var(--muted)">${r.cat}</td>
+        <td>${r.stock}</td>
+        <td style="color:var(--muted)">${r.reorder}</td>
+        <td style="color:var(--muted)">${r.wh}</td>
+        <td><span class="stock-badge ${classMap[r.status]}">${labelMap[r.status]}</span></td>
+      </tr>`;
+  });
+
+  /* ── Render Order Items ────────────────────────────────── */
+  const orderEl = document.getElementById("orderItems");
+  ORDER_ITEMS.forEach(i => {
+    orderEl.innerHTML += `
+      <div class="summary-item">
+        <div class="summary-thumb">${i.emoji}</div>
+        <div class="summary-info">
+          <div class="s-name">${i.name}</div>
+          <div class="s-meta">${i.meta}</div>
+        </div>
+        <div class="summary-price">${i.price}</div>
+      </div>`;
+  });
+
+  /* ── Toast ────────────────────────────────────────────── */
+  const toast = document.getElementById("toast");
+  let toastTimer;
+  function showToast(msg) {
+    toast.textContent = "✓ " + msg;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
+  }
+  function addToCart(name) { showToast(`"${name}" added to cart`); }
+
+  /* ── Card formatting ──────────────────────────────────── */
+  document.getElementById("pCard").addEventListener("input", function() {
+    let v = this.value.replace(/\D/g,"").substring(0,16);
+    this.value = v.replace(/(.{4})/g,"$1 ").trim();
+  });
+  document.getElementById("pExpiry").addEventListener("input", function() {
+    let v = this.value.replace(/\D/g,"").substring(0,4);
+    if(v.length > 2) v = v.substring(0,2) + " / " + v.substring(2);
+    this.value = v;
+  });
+
+  /* ── Payment submit ───────────────────────────────────── */
+  function handlePayment(e) {
+    e.preventDefault();
+    const name  = document.getElementById("pName").value;
+    const email = document.getElementById("pEmail").value;
+    // In production: POST to /customers and /payment-service
+    showToast(`Payment successful! Confirmation sent to ${email}`);
+    document.getElementById("paymentForm").reset();
+  }
+
+  /* ── Contact submit ───────────────────────────────────── */
+  function handleContact(e) {
+    e.preventDefault();
+    const first = document.getElementById("cFirst").value;
+    const email = document.getElementById("cEmail").value;
+    // In production: POST to /customers endpoint (customer data capture)
+    showToast(`Message received, ${first}! We'll reply to ${email} shortly.`);
+    document.getElementById("contactForm").reset();
+  }
+
+  /* ── Hamburger ────────────────────────────────────────── */
+  const burger = document.getElementById("hamburger");
+  const mMenu  = document.getElementById("mobileMenu");
+  burger.addEventListener("click", () => {
+    burger.classList.toggle("open");
+    mMenu.classList.toggle("open");
+  });
+  function closeMobile() {
+    burger.classList.remove("open");
+    mMenu.classList.remove("open");
+  }
+
+  /* ── Scroll progress ──────────────────────────────────── */
+  const bar = document.getElementById("progress-bar");
+  window.addEventListener("scroll", () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = pct + "%";
+  });
+
+  /* ── Intersection Observer — fade-up ─────────────────── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if(en.isIntersecting) { en.target.classList.add("visible"); obs.unobserve(en.target); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll(".fade-up").forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
