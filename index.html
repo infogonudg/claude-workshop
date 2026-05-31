@@ -138,56 +138,112 @@
 
     /* ── Hero ─────────────────────────────────────────────── */
     #hero {
-      min-height: 92vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       position: relative;
       overflow: hidden;
+      padding: 6rem 0 4rem;
     }
 
-    /* animated grid background */
+    /* grid background */
     #hero::before {
       content: "";
       position: absolute;
       inset: 0;
       background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 48px 48px;
-      opacity: .35;
+        linear-gradient(rgba(212,98,58,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,98,58,.08) 1px, transparent 1px);
+      background-size: 56px 56px;
+      opacity: 1;
     }
 
-    /* radial glow */
+    /* big left accent bar */
+    .hero-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 5px;
+      background: linear-gradient(180deg, transparent, var(--accent), transparent);
+    }
+
+    /* radial glow — bigger & brighter */
     #hero::after {
       content: "";
       position: absolute;
-      top: -20%;
-      right: -10%;
+      top: -30%;
+      right: -15%;
+      width: 900px;
+      height: 900px;
+      background: radial-gradient(circle, rgba(212,98,58,.28) 0%, rgba(212,98,58,.06) 40%, transparent 70%);
+      pointer-events: none;
+      animation: pulse 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1);   opacity: 1; }
+      50%       { transform: scale(1.1); opacity: .75; }
+    }
+
+    /* second bottom-left glow */
+    .hero-glow2 {
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(212,98,58,.18) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(212,98,58,.12) 0%, transparent 65%);
       pointer-events: none;
     }
 
     .hero-content {
       position: relative;
       z-index: 1;
-      max-width: 680px;
+      max-width: 780px;
+    }
+
+    /* eyebrow label */
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow .line {
+      width: 36px; height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .hero-eyebrow span {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
     }
 
     .hero-content h1 {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
-      font-weight: 800;
-      line-height: 1.12;
-      letter-spacing: -.02em;
-      margin-bottom: 1.25rem;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -.04em;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 4px 40px rgba(0,0,0,.6);
+    }
+
+    /* outlined text effect on second line */
+    .hero-content h1 .outline {
+      -webkit-text-stroke: 2px var(--accent);
+      color: transparent;
     }
 
     .hero-content p {
-      font-size: 1.05rem;
+      font-size: 1.15rem;
       color: var(--muted);
-      max-width: 520px;
-      margin-bottom: 2rem;
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+      line-height: 1.75;
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
     }
 
     .hero-btns {
@@ -199,53 +255,86 @@
     .btn-primary {
       background: var(--accent);
       color: var(--white);
-      font-size: .95rem;
-      font-weight: 700;
-      padding: .75rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 800;
+      padding: .9rem 2.2rem;
       border-radius: var(--radius);
       border: none;
       cursor: pointer;
+      letter-spacing: .02em;
       transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 0 0 0 rgba(212,98,58,.5);
     }
 
     .btn-primary:hover {
       background: var(--accent-lt);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(212,98,58,.35);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(212,98,58,.45), 0 0 0 4px rgba(212,98,58,.15);
     }
 
     .btn-ghost {
       background: transparent;
       color: var(--white);
-      font-size: .95rem;
-      font-weight: 600;
-      padding: .75rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: .9rem 2.2rem;
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      border: 2px solid rgba(255,255,255,.2);
       cursor: pointer;
-      transition: border-color var(--transition), background var(--transition);
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
     }
 
-    .btn-ghost:hover { border-color: var(--accent); background: rgba(212,98,58,.08); }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      background: rgba(212,98,58,.1);
+      transform: translateY(-3px);
+    }
 
+    /* stat strip */
     .hero-stats {
       display: flex;
-      gap: 2.5rem;
-      margin-top: 3rem;
+      gap: 0;
+      margin-top: 4rem;
       flex-wrap: wrap;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(22,27,34,.7);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
     }
 
-    .stat-item { }
+    .stat-item {
+      flex: 1;
+      min-width: 110px;
+      padding: 1.25rem 1.5rem;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform .35s ease;
+    }
+    .stat-item:hover::after { transform: scaleX(1); }
+
     .stat-item .num {
-      font-size: 1.6rem;
-      font-weight: 800;
+      font-size: 2rem;
+      font-weight: 900;
       color: var(--accent);
+      letter-spacing: -.03em;
+      line-height: 1;
     }
     .stat-item .label {
-      font-size: .8rem;
+      font-size: .72rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: .06em;
+      letter-spacing: .08em;
+      margin-top: .3rem;
     }
 
     /* ── Section wrapper ──────────────────────────────────── */
@@ -718,21 +807,53 @@
 
 <!-- ──────────── HERO ──────────── -->
 <section id="hero">
+  <div class="hero-bar"></div>
+  <div class="hero-glow2"></div>
   <div class="container">
     <div class="hero-content">
-      <div class="tag">Better to Shop</div>
-      <h1>Your Premium<br><span class="accent">Commerce Platform</span></h1>
-      <p>A modular, AI-powered shopping experience with inventory control, secure payments, and real-time analytics — built for modern businesses.</p>
+
+      <div class="hero-eyebrow">
+        <span class="line"></span>
+        <span>Better to Shop &nbsp;·&nbsp; Powered by AI</span>
+      </div>
+
+      <h1>
+        The Commerce<br>
+        Platform Built<br>
+        for <span class="outline">Winners</span>
+      </h1>
+
+      <p>
+        Modular. AI-powered. Enterprise-ready.
+        ShopArc combines inventory intelligence, secure payments,
+        and real-time analytics into one platform — so your business
+        scales without limits.
+      </p>
+
       <div class="hero-btns">
-        <a href="#products" class="btn-primary">Browse Products</a>
-        <a href="#skills"   class="btn-ghost">Explore Skills</a>
+        <a href="#products" class="btn-primary">⚡ &nbsp;Browse Products</a>
+        <a href="#skills"   class="btn-ghost">Explore Skills →</a>
       </div>
+
       <div class="hero-stats">
-        <div class="stat-item"><div class="num">12K+</div><div class="label">Products</div></div>
-        <div class="stat-item"><div class="num">98%</div><div class="label">Uptime</div></div>
-        <div class="stat-item"><div class="num">4.9★</div><div class="label">Rating</div></div>
-        <div class="stat-item"><div class="num">3.2M</div><div class="label">Customers</div></div>
+        <div class="stat-item">
+          <div class="num">12K+</div>
+          <div class="label">Products</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">98%</div>
+          <div class="label">Uptime</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">4.9★</div>
+          <div class="label">Avg Rating</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">3.2M</div>
+          <div class="label">Customers</div>
+        </div>
       </div>
+
     </div>
   </div>
 </section>
